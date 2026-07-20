@@ -27,7 +27,7 @@ Lee en este orden:
 
 Lee:
 
-1. **[MONOREPO_EXPLAINED.md](./MONOREPO_EXPLAINED.md)** ⭐ (TÚ PREGUNTASTE ESTO)
+1. **[MONOREPO_EXPLAINED.md](./MONOREPO_EXPLAINED.md)** ⭐ (ARQUITECTURA DE REPOSITORIO POR WORSPACES)
    - ¿Por qué hay package.json en la raíz?
    - Cómo funciona npm workspaces
    - Diferencia entre desarrollo y deployment
@@ -247,23 +247,7 @@ Horas      Documentación
 ---
 
 ## 🚀 Próximos Pasos
-
-### Hoy (Fase 1)
-- [x] Instalación y setup
-- [x] Entender arquitectura
-- [x] Correr localmente
-- [ ] **(TÚ ESTÁS AQUÍ)** Decidir estrategia de deployment
-
-### Mañana (Fase 2)
-- [ ] Integración con base de datos real
-- [ ] Búsqueda de inventario
-- [ ] Cálculo de presupuesto
-
-### Luego (Fase 3)
-- [ ] Autenticación de usuarios
-- [ ] Geolocalización de tiendas
-- [ ] Sistema de checkout
-
+....
 ---
 
 **¿Perdido?** Empieza con [QUICK_START.md](./QUICK_START.md) 🚀

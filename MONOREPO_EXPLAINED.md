@@ -1,10 +1,6 @@
 # 🏗️ Arquitectura de Monorepo vs Deployment
 
-## El Problema que Tenías Razón
-
-Dijiste: "¿Por qué hay un package.json afuera si deberían ser dos proyectos independientes?"
-
-**Respuesta:** En **desarrollo local**, es conveniente un monorepo. En **deployment**, se separan completamente.
+En **desarrollo local**, es conveniente un monorepo. En **deployment**, se separan completamente.
 
 ---
 
@@ -266,7 +262,7 @@ Repositorio 2: construye-client
 
 ### ¿Monorepo o Separados?
 
-**MONOREPO (Lo que hicimos) es MEJOR porque:**
+**MONOREPO es MEJOR porque:**
 
 ✅ Una sola fuente de verdad (un repo)
 ✅ Fácil versionar en conjunto
@@ -313,12 +309,5 @@ git push origin main
 ```
 
 ---
-
-**¿Preguntas?** Ahora entiendes cómo:
-
-1. ✅ Monorepo se usa en desarrollo
-2. ✅ Se separa completamente en deployment
-3. ✅ Cada plataforma toma solo su carpeta
-4. ✅ Auto-deploy con cada push
 
 ¡Esto es lo mejor de ambos mundos! 🚀
