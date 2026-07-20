@@ -1,0 +1,34 @@
+{
+    "name": "construye",
+    "version": "1.0.0",
+    "description": "Plataforma de asistencia técnica para proyectos de hogar",
+    "private": true,
+    "workspaces": [
+        "client",
+        "server"
+    ],
+    "scripts": {
+        "install:all": "npm install",
+        "dev": "npm run dev --workspaces",
+        "dev:server": "npm run dev --workspace=server",
+        "dev:client": "npm run dev --workspace=client",
+        "build": "npm run build --workspaces",
+        "build:server": "npm run build --workspace=server",
+        "build:client": "npm run build --workspace=client",
+        "build:all": "npm run build:server && npm run build:client",
+        "preview:server": "npm run preview --workspace=server",
+        "preview:client": "npm run preview --workspace=client",
+        "start": "npm start --workspace=server",
+        "start:client": "npm run preview --workspace=client"
+    },
+    "keywords": [
+        "construction",
+        "home-projects",
+        "technical-assistance",
+        "plumbing",
+        "masonry",
+        "electrical"
+    ],
+    "author": "",
+    "license": "MIT"
+}

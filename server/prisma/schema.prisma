@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Categoría de especialidad técnica
+model Categoria {
+  id        Int     @id @default(autoincrement())
+  nombre    String  @unique
+  descripcion String?
+  piezas    Pieza[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Piezas/Materiales requeridos
+model Pieza {
+  id          Int     @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  calibre     String? // Grosor, diámetro, especificación
+  unidad      String  @default("unidad") // unidad, metro, kg, etc.
+  
+  categoria   Categoria @relation(fields: [categoriaId], references: [id], onDelete: Cascade)
+  categoriaId Int
+  
+  inventarios Inventario[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([categoriaId])
+}
+
+// Vendedores/Tiendas (para la Fase 2)
+model Vendedor {
+  id        Int     @id @default(autoincrement())
+  nombre    String
+  ubicacion String?
+  latitud   Float?
+  longitud  Float?
+  telefono  String?
+  
+  inventarios Inventario[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Inventario: relación entre Piezas y Vendedores (con precios)
+model Inventario {
+  id        Int     @id @default(autoincrement())
+  
+  pieza     Pieza @relation(fields: [piezaId], references: [id], onDelete: Cascade)
+  piezaId   Int
+  
+  vendedor  Vendedor @relation(fields: [vendedorId], references: [id], onDelete: Cascade)
+  vendedorId Int
+  
+  cantidad  Int
+  precio    Float
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([piezaId, vendedorId])
+  @@index([piezaId])
+  @@index([vendedorId])
+}
