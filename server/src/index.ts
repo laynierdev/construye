@@ -1,181 +1,172 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
-// Tipos para las solicitudes
-interface Fase1Request {
-    especialidad: 'plomeria' | 'albanileria' | 'electricidad';
-    distancia?: number; // metros
-    calibre?: string; // grosor/especificación
-    cantidadEsquinas?: number;
-    cantidadDerivaciones?: number;
+interface Phase1Request {
+    specialty: 'plumbing' | 'masonry' | 'electrical';
+    distance?: number;
+    gauge?: string;
+    cornerCount?: number;
+    connectionCount?: number;
 }
 
-interface Pieza {
-    nombre: string;
-    cantidad: number;
-    calibre: string;
-    unidad: string;
+interface RequiredPart {
+    name: string;
+    quantity: number;
+    gauge: string;
+    unit: string;
 }
 
-interface Fase1Response {
-    especialidad: string;
-    piezas: Pieza[];
-    instrucciones: string;
-    esquemaConceptual: string;
-    proximasFases: string;
+interface Phase1Response {
+    specialty: string;
+    parts: RequiredPart[];
+    instructions: string;
+    conceptualDiagram: string;
+    nextPhases: string;
 }
 
 const app = new Hono();
 
-// Middleware CORS
 app.use('*', cors());
 
-// Health check
 app.get('/health', (c) => {
-    return c.json({ status: 'ok', message: 'Servidor Construye API funcionando' });
+    return c.json({ status: 'ok', message: 'Construye API server is running' });
 });
 
 /**
- * Endpoint para Fase 1: Asistencia técnica con motor de IA mockeado
- * POST /api/v1/fase1/asistente
+ * Phase 1 endpoint: technical assistance with a mocked AI engine
+ * POST /api/v1/phase1/assistant
  */
-app.post('/api/v1/fase1/asistente', async (c) => {
+app.post('/api/v1/phase1/assistant', async (c) => {
     try {
-        const body = await c.req.json<Fase1Request>();
+        const body = await c.req.json<Phase1Request>();
 
-        // Validar entrada
-        if (!body.especialidad || !['plomeria', 'albanileria', 'electricidad'].includes(body.especialidad)) {
+        if (!body.specialty || !['plumbing', 'masonry', 'electrical'].includes(body.specialty)) {
             return c.json(
-                { error: 'Especialidad inválida. Debe ser: plomeria, albanileria o electricidad' },
+                { error: 'Invalid specialty. Expected: plumbing, masonry, or electrical' },
                 { status: 400 }
             );
         }
 
-        // Construir respuesta según especialidad
-        const respuesta = procesarFase1(body);
+        const response = processPhase1(body);
 
-        return c.json(respuesta, { status: 200 });
+        return c.json(response, { status: 200 });
     } catch (error) {
         return c.json(
-            { error: 'Error procesando solicitud', details: String(error) },
+            { error: 'Error processing request', details: String(error) },
             { status: 500 }
         );
     }
 });
 
-/**
- * Procesa la solicitud de Fase 1 y devuelve piezas recomendadas
- */
-function procesarFase1(request: Fase1Request): Fase1Response {
-    const { especialidad, distancia = 10, calibre = 'estándar', cantidadEsquinas = 0, cantidadDerivaciones = 0 } = request;
+function processPhase1(request: Phase1Request): Phase1Response {
+    const { specialty, distance = 10, gauge = 'standard', cornerCount = 0, connectionCount = 0 } = request;
 
-    let piezas: Pieza[] = [];
-    let instrucciones = '';
-    let esquemaConceptual = '';
+    let parts: RequiredPart[] = [];
+    let instructions = '';
+    let conceptualDiagram = '';
 
-    if (especialidad === 'plomeria') {
-        piezas = generarPiezasPlomeria(distancia, calibre, cantidadDerivaciones);
-        instrucciones = `
-1. Verificar presión del sistema (máx 80 psi)
-2. Preparar tuberías cortando a medida (${distancia}m total)
-3. Instalar conexiones con teflón
-4. Sellar derivaciones secundarias (${cantidadDerivaciones} conexiones)
-5. Realizar prueba de hermeticidad
+    if (specialty === 'plumbing') {
+        parts = generatePlumbingParts(distance, gauge, connectionCount);
+        instructions = `
+1. Verify system pressure (max 80 psi)
+2. Prepare pipes by cutting to size (${distance}m total)
+3. Install connections with PTFE tape
+4. Seal secondary branches (${connectionCount} connections)
+5. Perform a leak test
     `.trim();
-        esquemaConceptual = `
+        conceptualDiagram = `
 ┌─────────────────────┐
-│   Fuente Principal  │
+│   Main Supply       │
 └──────────┬──────────┘
            │
-      [Válvula]
+      [Valve]
            │
     ┌──────┴──────┐
     │              │
-[Derivación 1] [Derivación 2]
+[Branch 1] [Branch 2]
     `;
-    } else if (especialidad === 'albanileria') {
-        piezas = generarPiezasAlbanileria(distancia, calibre, cantidadEsquinas);
-        instrucciones = `
-1. Nivelar y preparar base (área aprox. ${distancia * 2}m²)
-2. Colocar varillas de refuerzo en esquinas (${cantidadEsquinas} esquinas)
-3. Vertir concreto/mortero según especificación
-4. Dejar curar mínimo 7 días
-5. Realizar inspección visual
+    } else if (specialty === 'masonry') {
+        parts = generateMasonryParts(distance, gauge, cornerCount);
+        instructions = `
+1. Level and prepare the base (approx. ${distance * 2}m² area)
+2. Place reinforcement bars at the corners (${cornerCount} corners)
+3. Pour concrete/mortar according to specification
+4. Allow curing for at least 7 days
+5. Perform a visual inspection
     `.trim();
-        esquemaConceptual = `
+        conceptualDiagram = `
     ┌─────────────────────┐
-    │   Estructura Base   │
-    │  (${distancia * 2}m²)         │
+    │   Base Structure    │
+    │  (${distance * 2}m²)         │
     └──────┬──────┬────┬──┘
-         [Esquina 1..${cantidadEsquinas}]
+         [Corner 1..${cornerCount}]
     `;
-    } else if (especialidad === 'electricidad') {
-        piezas = generarPiezasElectricidad(distancia, calibre, cantidadDerivaciones);
-        instrucciones = `
-1. Verificar carga total del circuito
-2. Tender cables de calibre ${calibre} en bandejas/tuberías
-3. Instalar cajas de conexión cada 1.5-2m
-4. Conectar ${cantidadDerivaciones} derivaciones secundarias
-5. Probar continuidad y aislamiento antes de energizar
+    } else if (specialty === 'electrical') {
+        parts = generateElectricalParts(distance, gauge, connectionCount);
+        instructions = `
+1. Verify the total circuit load
+2. Run cables of gauge ${gauge} through trays or conduits
+3. Install connection boxes every 1.5-2m
+4. Connect ${connectionCount} secondary branches
+5. Test continuity and insulation before energizing
     `.trim();
-        esquemaConceptual = `
+        conceptualDiagram = `
     ┌──────────────┐
-    │  Panel Prin. │
+    │  Main Panel  │
     └───────┬──────┘
-            │ (${calibre})
+            │ (${gauge})
       ┌─────┴──────┐
       │            │
-   [Carga 1]   [Derivaciones: ${cantidadDerivaciones}]
+   [Load 1]   [Branches: ${connectionCount}]
     `;
     }
 
     return {
-        especialidad,
-        piezas,
-        instrucciones,
-        esquemaConceptual,
-        proximasFases: 'En la Fase 2 buscaremos piezas en inventarios cercanos, calcularemos presupuesto y geolocalización de tiendas.',
+        specialty,
+        parts,
+        instructions,
+        conceptualDiagram,
+        nextPhases: 'In Phase 2 we will search for parts in nearby inventories, calculate the budget, and locate nearby stores.',
     };
 }
 
-function generarPiezasPlomeria(distancia: number, calibre: string, derivaciones: number): Pieza[] {
-    const cantidadTuberia = Math.ceil(distancia / 5) + 1; // Considerar desperdicios
+function generatePlumbingParts(distance: number, gauge: string, branches: number): RequiredPart[] {
+    const pipeQuantity = Math.ceil(distance / 5) + 1;
     return [
-        { nombre: 'Tubería PVC', cantidad: cantidadTuberia, calibre, unidad: 'metros' },
-        { nombre: 'Codos 90°', cantidad: Math.max(2, Math.floor(distancia / 3)), calibre, unidad: 'unidades' },
-        { nombre: 'Tés de derivación', cantidad: derivaciones, calibre, unidad: 'unidades' },
-        { nombre: 'Válvula de compuerta', cantidad: 1, calibre, unidad: 'unidades' },
-        { nombre: 'Empaques de teflón', cantidad: 5, calibre: 'estándar', unidad: 'rollos' },
-        { nombre: 'Pegamento PVC', cantidad: 1, calibre: 'estándar', unidad: 'bote' },
+        { name: 'PVC Pipe', quantity: pipeQuantity, gauge, unit: 'meters' },
+        { name: '90° Elbows', quantity: Math.max(2, Math.floor(distance / 3)), gauge, unit: 'units' },
+        { name: 'Branch Tees', quantity: branches, gauge, unit: 'units' },
+        { name: 'Gate Valve', quantity: 1, gauge, unit: 'units' },
+        { name: 'PTFE Tape', quantity: 5, gauge: 'standard', unit: 'rolls' },
+        { name: 'PVC Cement', quantity: 1, gauge: 'standard', unit: 'can' },
     ];
 }
 
-function generarPiezasAlbanileria(distancia: number, calibre: string, esquinas: number): Pieza[] {
-    const areaCubierta = distancia * 2; // aproximado
+function generateMasonryParts(distance: number, gauge: string, corners: number): RequiredPart[] {
+    const coveredArea = distance * 2;
     return [
-        { nombre: 'Varillas de acero', cantidad: esquinas * 4, calibre: calibre || '#4', unidad: 'metros' },
-        { nombre: 'Bolsas de cemento', cantidad: Math.ceil(areaCubierta / 2), calibre: '50kg', unidad: 'bolsas' },
-        { nombre: 'Arena para mortero', cantidad: Math.ceil(areaCubierta / 1.5), calibre: 'estándar', unidad: 'm³' },
-        { nombre: 'Grava/Piedra triturada', cantidad: Math.ceil(areaCubierta / 2), calibre: '3/4"', unidad: 'm³' },
-        { nombre: 'Alambre de amarre', cantidad: Math.ceil(distancia * 0.5), calibre: '#16', unidad: 'kg' },
-        { nombre: 'Madera para encofrado', cantidad: Math.ceil(distancia * 2), calibre: '2x4', unidad: 'metros' },
+        { name: 'Steel Rebar', quantity: corners * 4, gauge: gauge || '#4', unit: 'meters' },
+        { name: 'Cement Bags', quantity: Math.ceil(coveredArea / 2), gauge: '50kg', unit: 'bags' },
+        { name: 'Mortar Sand', quantity: Math.ceil(coveredArea / 1.5), gauge: 'standard', unit: 'm³' },
+        { name: 'Gravel/Crushed Stone', quantity: Math.ceil(coveredArea / 2), gauge: '3/4"', unit: 'm³' },
+        { name: 'Tie Wire', quantity: Math.ceil(distance * 0.5), gauge: '#16', unit: 'kg' },
+        { name: 'Formwork Lumber', quantity: Math.ceil(distance * 2), gauge: '2x4', unit: 'meters' },
     ];
 }
 
-function generarPiezasElectricidad(distancia: number, calibre: string, derivaciones: number): Pieza[] {
-    const cantidadCajas = Math.ceil(distancia / 1.5);
+function generateElectricalParts(distance: number, gauge: string, branches: number): RequiredPart[] {
+    const boxCount = Math.ceil(distance / 1.5);
     return [
-        { nombre: 'Cable conductor', cantidad: Math.ceil(distancia * 1.1), calibre: calibre || '14 AWG', unidad: 'metros' },
-        { nombre: 'Cajas de conexión', cantidad: cantidadCajas, calibre: 'estándar', unidad: 'unidades' },
-        { nombre: 'Conectores tipo tuerca', cantidad: cantidadCajas * 2, calibre: calibre || '14 AWG', unidad: 'unidades' },
-        { nombre: 'Breakers/Interruptores', cantidad: derivaciones + 1, calibre: '20A', unidad: 'unidades' },
-        { nombre: 'Canaleta/Tubo conduit', cantidad: Math.ceil(distancia * 0.8), calibre: '1/2"', unidad: 'metros' },
-        { nombre: 'Placas de cubierta', cantidad: cantidadCajas, calibre: 'estándar', unidad: 'unidades' },
+        { name: 'Conductive Cable', quantity: Math.ceil(distance * 1.1), gauge: gauge || '14 AWG', unit: 'meters' },
+        { name: 'Connection Boxes', quantity: boxCount, gauge: 'standard', unit: 'units' },
+        { name: 'Wire Nuts', quantity: boxCount * 2, gauge: gauge || '14 AWG', unit: 'units' },
+        { name: 'Breakers/Switches', quantity: branches + 1, gauge: '20A', unit: 'units' },
+        { name: 'Conduit Tubing', quantity: Math.ceil(distance * 0.8), gauge: '1/2"', unit: 'meters' },
+        { name: 'Cover Plates', quantity: boxCount, gauge: 'standard', unit: 'units' },
     ];
 }
 
-// Puerto de escucha
 const port = parseInt(process.env.PORT || '3000');
-console.log(`🚀 Servidor Construye ejecutándose en puerto ${port}`);
+console.log(`🚀 Construye server running on port ${port}`);
 
 export default app;

@@ -1,7 +1,7 @@
 {
     "name": "construye",
     "version": "1.0.0",
-    "description": "Plataforma de asistencia técnica para proyectos de hogar",
+    "description": "Technical assistance platform for home projects",
     "private": true,
     "workspaces": [
         "client",
