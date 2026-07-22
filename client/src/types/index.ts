@@ -19,6 +19,7 @@ export interface FormData {
     specialty: Specialty | '';
     distance: number;
     gauge: string;
+    description: string;
     cornerCount: number;
     connectionCount: number;
 }
