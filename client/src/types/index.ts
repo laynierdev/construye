@@ -1,16 +1,19 @@
 export interface RequiredPart {
     name: string;
     quantity: number;
-    gauge: string;
     unit: string;
+    gauge: string;
+    notes?: string;
 }
 
 export interface Phase1Response {
     specialty: string;
     parts: RequiredPart[];
-    instructions: string;
+    instructions: string[];
     conceptualDiagram: string;
+    tips: string[];
     nextPhases: string;
+    aiGenerated: boolean;
 }
 
 export type Specialty = 'plumbing' | 'masonry' | 'electrical';

@@ -13,7 +13,9 @@
         "prisma:studio": "prisma studio"
     },
     "dependencies": {
+        "@hono/node-server": "^2.1.0",
         "@prisma/client": "^5.0.0",
+        "dotenv": "^17.4.2",
         "hono": "^4.0.0"
     },
     "devDependencies": {
