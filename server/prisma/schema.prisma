@@ -10,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Categoría de especialidad técnica
+// Technical specialty category
 model Categoria {
   id        Int     @id @default(autoincrement())
   nombre    String  @unique
@@ -21,13 +21,13 @@ model Categoria {
   updatedAt DateTime @updatedAt
 }
 
-// Piezas/Materiales requeridos
+// Required parts/materials
 model Pieza {
   id          Int     @id @default(autoincrement())
   nombre      String
   descripcion String?
-  calibre     String? // Grosor, diámetro, especificación
-  unidad      String  @default("unidad") // unidad, metro, kg, etc.
+  calibre     String? // Thickness, diameter, specification
+  unidad      String  @default("unit") // unit, meter, kg, etc.
   
   categoria   Categoria @relation(fields: [categoriaId], references: [id], onDelete: Cascade)
   categoriaId Int
@@ -40,7 +40,7 @@ model Pieza {
   @@index([categoriaId])
 }
 
-// Vendedores/Tiendas (para la Fase 2)
+// Vendors/stores (for Phase 2)
 model Vendedor {
   id        Int     @id @default(autoincrement())
   nombre    String
@@ -55,7 +55,7 @@ model Vendedor {
   updatedAt DateTime @updatedAt
 }
 
-// Inventario: relación entre Piezas y Vendedores (con precios)
+// Inventory: relationship between parts and vendors (with prices)
 model Inventario {
   id        Int     @id @default(autoincrement())
   

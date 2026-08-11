@@ -1,39 +1,39 @@
 # 🎨 Construye - Frontend
 
-Frontend de la plataforma **Construye** construido con **Vue.js 3**, **Vite** y **W3.CSS**.
+Frontend for the **Construye** platform built with **Vue.js 3**, **Vite**, and **W3.CSS**.
 
-## 📋 Características
+## 📋 Features
 
-- ✅ Vue.js 3 con Composition API
-- ✅ Vite para desarrollo rápido
+- ✅ Vue.js 3 with the Composition API
+- ✅ Vite for fast development
 - ✅ TypeScript
-- ✅ W3.CSS para estilos ligeros
+- ✅ W3.CSS for lightweight styling
 - ✅ Responsive design
-- ✅ Componentes modulares
+- ✅ Modular components
 
-## 🚀 Inicio Rápido
+## 🚀 Quick Start
 
-### Instalación
+### Installation
 
 ```bash
 npm install
 ```
 
-### Desarrollo
+### Development
 
 ```bash
 npm run dev
 ```
 
-La aplicación estará disponible en `http://localhost:5173`
+The application will be available at `http://localhost:5173`
 
-### Build para Producción
+### Production Build
 
 ```bash
 npm run build
 ```
 
-Los archivos compilados estarán en la carpeta `dist/`
+The compiled files will be in the `dist/` folder
 
 ### Preview de Build
 
@@ -41,73 +41,73 @@ Los archivos compilados estarán en la carpeta `dist/`
 npm run preview
 ```
 
-## 📂 Estructura de Carpetas
+## 📂 Folder Structure
 
 ```
 src/
-├── components/          # Componentes Vue
+├── components/          # Vue components
 │   └── ResultadosFase1.vue
-├── types/              # Definiciones TypeScript
+├── types/              # TypeScript definitions
 │   └── index.ts
-├── utils/              # Funciones utilitarias
-│   └── api.ts         # Llamadas HTTP
-├── App.vue            # Componente raíz
-└── main.ts            # Punto de entrada
+├── utils/              # Utility functions
+│   └── api.ts         # HTTP calls
+├── App.vue            # Root component
+└── main.ts            # Entry point
 
-public/               # Archivos estáticos
-index.html           # HTML principal
+public/               # Static files
+index.html           # Main HTML file
 ```
 
-## 🎯 Componentes
+## 🎯 Components
 
 ### App.vue
-**Componente principal** con:
-- Formulario de selección de especialidad
-- Campos dinámicos según especialidad
-- Envío de solicitud a servidor
-- Manejo de errores y estado de carga
+**Main component** with:
+- Specialty selection form
+- Dynamic fields based on the specialty
+- Request submission to the server
+- Error handling and loading state
 
 ### ResultadosFase1.vue
-**Componente de resultados** que muestra:
-- Lista de piezas requeridas en tabla
-- Instrucciones de instalación
-- Esquema conceptual/diagrama
-- Botón de buscar piezas (deshabilitado en Fase 1)
+**Results component** that shows:
+- A table of required parts
+- Installation instructions
+- The conceptual diagram
+- The search-parts button (disabled in Phase 1)
 
 ## 🔌 API Integration
 
 ### `src/utils/api.ts`
 
-Función principal: `enviarSolicitudFase1(data: FormData)`
+Main function: `sendPhase1Request(data: FormData)`
 
 ```typescript
-const respuesta = await enviarSolicitudFase1({
-  especialidad: 'plomeria',
-  distancia: 10,
-  calibre: '1/2"',
-  cantidadEsquinas: 0,
-  cantidadDerivaciones: 2
+const response = await sendPhase1Request({
+  specialty: 'plumbing',
+  distance: 10,
+  gauge: '1/2"',
+  cornerCount: 0,
+  connectionCount: 2
 });
 ```
 
-## 🎨 Estilos (W3.CSS)
+## 🎨 Styles (W3.CSS)
 
-Se utiliza **W3.CSS** (https://www.w3schools.com/w3css/) para:
-- Layout responsivo
-- Componentes predefinidos
-- Sin dependencias pesadas
-- Tamaño mínimo
+**W3.CSS** (https://www.w3schools.com/w3css/) is used for:
+- Responsive layout
+- Predefined components
+- No heavy dependencies
+- Small footprint
 
-**Colores principales:**
-- Teal (`w3-teal`): Acciones principales
-- Green (`w3-light-green`): Éxito
-- Blue (`w3-light-blue`): Información
-- Yellow (`w3-light-yellow`): Advertencias
-- Red (`w3-red`): Errores
+**Main colors:**
+- Teal (`w3-teal`): primary actions
+- Green (`w3-light-green`): success
+- Blue (`w3-light-blue`): information
+- Yellow (`w3-light-yellow`): warnings
+- Red (`w3-red`): errors
 
-## 🌐 Configuración de CORS
+## 🌐 CORS Configuration
 
-En `vite.config.ts`, las llamadas a `/api/*` se redirigen automáticamente a `http://localhost:3000`:
+In `vite.config.ts`, calls to `/api/*` are automatically redirected to `http://localhost:3000`:
 
 ```typescript
 proxy: {
@@ -118,29 +118,29 @@ proxy: {
 }
 ```
 
-## 📦 Dependencias
+## 📦 Dependencies
 
-- `vue@^3.4.0`: Framework reactivo
-- `vite@^5.0.0`: Build tool
-- `typescript@^5.0.0`: Type checking
+- `vue@^3.4.0`: reactive framework
+- `vite@^5.0.0`: build tool
+- `typescript@^5.0.0`: type checking
 
-## 🚀 Workflow Típico
+## 🚀 Typical Workflow
 
-1. Usuario selecciona especialidad en dropdown
-2. Campos dinámicos se mostrar según especialidad
-3. Usuario completa formulario
-4. Click en "Generar Asistencia"
-5. Request POST a `/api/v1/fase1/asistente`
-6. Respuesta se muestra en tabla de piezas + instrucciones
-7. Usuario puede hacer click en "Volver" para nuevo cálculo
+1. User selects a specialty from the dropdown
+2. Dynamic fields appear based on the specialty
+3. User completes the form
+4. Clicks "Generate Assistance"
+5. Sends a POST request to `/api/v1/phase1/assistant`
+6. The response is shown in a parts table with instructions
+7. User can click "Back" for a new calculation
 
-## 🔄 Próximos Pasos (Fase 2)
+## 🔄 Next Steps (Phase 2)
 
-- [ ] Habilitar botón "Buscar Piezas y Calcular Presupuesto"
-- [ ] Mostrar mapeo de tiendas cercanas
-- [ ] Integración con sistema de checkout
-- [ ] Autenticación de usuarios
-- [ ] Historial de proyectos
+- [ ] Enable the "Search Parts and Calculate Budget" button
+- [ ] Show nearby store mapping
+- [ ] Integrate the checkout system
+- [ ] User authentication
+- [ ] Project history
 
 ## 📝 Variables de Entorno
 
@@ -152,13 +152,13 @@ VITE_API_URL=http://localhost:3000
 
 ## 🛠️ Troubleshooting
 
-### El servidor no se conecta
-- Verificar que backend está corriendo en `http://localhost:3000`
-- Revisar consola del navegador para CORS issues
+### The server is not connecting
+- Verify that the backend is running at `http://localhost:3000`
+- Check the browser console for CORS issues
 
-### Estilos no se cargan
-- Asegurarse que W3.CSS está siendo importado en `index.html`
+### Styles are not loading
+- Make sure W3.CSS is imported in `index.html`
 
 ---
 
-**Última actualización:** Julio 2026
+**Last updated:** July 2026

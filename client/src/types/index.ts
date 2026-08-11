@@ -1,24 +1,28 @@
-export interface Pieza {
-    nombre: string;
-    cantidad: number;
-    calibre: string;
-    unidad: string;
+export interface RequiredPart {
+    name: string;
+    quantity: number;
+    unit: string;
+    gauge: string;
+    notes?: string;
 }
 
-export interface Fase1Response {
-    especialidad: string;
-    piezas: Pieza[];
-    instrucciones: string;
-    esquemaConceptual: string;
-    proximasFases: string;
+export interface Phase1Response {
+    specialty: string;
+    parts: RequiredPart[];
+    instructions: string[];
+    conceptualDiagram: string;
+    tips: string[];
+    nextPhases: string;
+    aiGenerated: boolean;
 }
 
-export type Especialidad = 'plomeria' | 'albanileria' | 'electricidad';
+export type Specialty = 'plumbing' | 'masonry' | 'electrical';
 
 export interface FormData {
-    especialidad: Especialidad | '';
-    distancia: number;
-    calibre: string;
-    cantidadEsquinas: number;
-    cantidadDerivaciones: number;
+    specialty: Specialty | '';
+    distance: number;
+    gauge: string;
+    description: string;
+    cornerCount: number;
+    connectionCount: number;
 }

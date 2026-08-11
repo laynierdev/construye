@@ -1,65 +1,65 @@
 # 🚀 Construye - Backend API
 
-Backend de la plataforma **Construye** construido con **Hono**, **Prisma** y **MySQL**.
+Backend for the **Construye** platform built with **Hono**, **Prisma**, and **MySQL**.
 
-## 📋 Características
+## 📋 Features
 
-- ✅ Framework HTTP ultraligero (Hono)
-- ✅ ORM moderno (Prisma)
-- ✅ Soporte para MySQL
+- ✅ Lightweight HTTP framework (Hono)
+- ✅ Modern ORM (Prisma)
+- ✅ MySQL support
 - ✅ TypeScript
-- ✅ CORS habilitado
-- ✅ Motor de construcción de prompts para LLM
+- ✅ CORS enabled
+- ✅ Prompt-building engine for LLMs
 
-## 🚀 Inicio Rápido
+## 🚀 Quick Start
 
-### Instalación
+### Installation
 
 ```bash
 npm install
 ```
 
-### Configuración de Base de Datos
+### Database Configuration
 
-1. Copiar `.env.example` a `.env`:
+1. Copy `.env.example` to `.env`:
 ```bash
 cp .env.example .env
 ```
 
-2. Actualizar `DATABASE_URL` en `.env` con tus credenciales de MySQL
+2. Update `DATABASE_URL` in `.env` with your MySQL credentials
 
-3. Generar cliente Prisma:
+3. Generate the Prisma client:
 ```bash
 npm run prisma:generate
 ```
 
-4. (Opcional) Ejecutar migraciones:
+4. (Optional) Run migrations:
 ```bash
 npm run prisma:migrate
 ```
 
-### Desarrollo
+### Development
 
 ```bash
 npm run dev
 ```
 
-El servidor estará disponible en `http://localhost:3000`
+The server will be available at `http://localhost:3000`
 
-### Build para Producción
+### Production Build
 
 ```bash
 npm run build
 npm start
 ```
 
-## 📡 Rutas API (Fase 1)
+## 📡 API Routes (Phase 1)
 
 ### Health Check
 ```
 GET /health
 ```
-Respuesta:
+Response:
 ```json
 {
   "status": "ok",
@@ -67,67 +67,67 @@ Respuesta:
 }
 ```
 
-### Asistente Fase 1
+### Phase 1 Assistant
 ```
-POST /api/v1/fase1/asistente
+POST /api/v1/phase1/assistant
 ```
 
 **Body:**
 ```json
 {
-  "especialidad": "plomeria|albanileria|electricidad",
-  "distancia": 10,
-  "calibre": "1/2\"",
-  "cantidadEsquinas": 0,
-  "cantidadDerivaciones": 2
+  "specialty": "plumbing|masonry|electrical",
+  "distance": 10,
+  "gauge": "1/2\"",
+  "cornerCount": 0,
+  "connectionCount": 2
 }
 ```
 
-**Respuesta Exitosa (200):**
+**Successful Response (200):**
 ```json
 {
-  "especialidad": "plomeria",
-  "piezas": [
+  "specialty": "plumbing",
+  "parts": [
     {
-      "nombre": "Tubería PVC",
-      "cantidad": 3,
-      "calibre": "1/2\"",
-      "unidad": "metros"
+      "name": "PVC Pipe",
+      "quantity": 3,
+      "gauge": "1/2\"",
+      "unit": "meters"
     }
   ],
-  "instrucciones": "1. Verificar presión del sistema...",
-  "esquemaConceptual": "...",
-  "proximasFases": "..."
+  "instructions": "1. Verify system pressure...",
+  "conceptualDiagram": "...",
+  "nextPhases": "..."
 }
 ```
 
-**Respuesta de Error (400):**
+**Error Response (400):**
 ```json
 {
-  "error": "Especialidad inválida. Debe ser: plomeria, albanileria o electricidad"
+  "error": "Invalid specialty. Expected: plumbing, masonry, or electrical"
 }
 ```
 
-## 🗄️ Base de Datos
+## 🗄️ Database
 
-Ver `prisma/schema.prisma` para la definición completa de modelos.
+See `prisma/schema.prisma` for the full model definition.
 
-### Modelos
-- **Categoria**: Especialidades técnicas
-- **Pieza**: Materiales/componentes
-- **Vendedor**: Tiendas/proveedores
-- **Inventario**: Stock y precios
+### Models
+- **Category**: Technical specialties
+- **Part**: Materials/components
+- **Vendor**: Stores/suppliers
+- **Inventory**: Stock and pricing
 
-## 🛠️ Scripts disponibles
+## 🛠️ Available Scripts
 
-- `npm run dev`: Inicia servidor en modo desarrollo con hot-reload
-- `npm run build`: Compila TypeScript a JavaScript
-- `npm start`: Inicia servidor compilado en producción
-- `npm run prisma:generate`: Genera cliente Prisma
-- `npm run prisma:migrate`: Ejecuta migraciones de BD
-- `npm run prisma:studio`: Abre interfaz gráfica de Prisma
+- `npm run dev`: Start the server in development mode with hot-reload
+- `npm run build`: Compile TypeScript to JavaScript
+- `npm start`: Start the compiled server in production mode
+- `npm run prisma:generate`: Generate the Prisma client
+- `npm run prisma:migrate`: Run database migrations
+- `npm run prisma:studio`: Open the Prisma GUI
 
-## 🏗️ Estructura de Carpetas
+## 🏗️ Folder Structure
 
 ```
 src/
@@ -139,18 +139,18 @@ prisma/
 
 ## 📚 Recursos
 
-- [Documentación Hono](https://hono.dev)
-- [Documentación Prisma](https://www.prisma.io/docs)
-- [Documentación MySQL](https://dev.mysql.com/doc/)
+- [Hono documentation](https://hono.dev)
+- [Prisma documentation](https://www.prisma.io/docs)
+- [MySQL documentation](https://dev.mysql.com/doc/)
 
-## 🔄 Próximos Pasos (Fase 2)
+## 🔄 Next Steps (Phase 2)
 
-- [ ] Integración con LLM real
-- [ ] Endpoints para consultar inventario
-- [ ] Cálculo de presupuestos
-- [ ] Autenticación y autorización
-- [ ] Geolocalización
+- [ ] Real LLM integration
+- [ ] Inventory query endpoints
+- [ ] Budget calculation
+- [ ] Authentication and authorization
+- [ ] Geolocation
 
 ---
 
-**Última actualización:** Julio 2026
+**Last updated:** July 2026
