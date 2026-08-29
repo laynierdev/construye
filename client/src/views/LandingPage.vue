@@ -9,7 +9,22 @@
           <span class="nav-logo">Construye</span>
         </div>
         <div class="nav-actions">
-          <RouterLink to="/client" class="btn-nav btn-outline">Entrar como Cliente</RouterLink>
+          <div class="client-dropdown">
+            <button class="btn-nav btn-outline" @click="clientMenuOpen = !clientMenuOpen">
+              Para Clientes ▾
+            </button>
+            <div class="client-menu" v-show="clientMenuOpen">
+              <RouterLink to="/client" class="client-menu-item" @click="clientMenuOpen = false">
+                ✨ Calcular materiales
+              </RouterLink>
+              <RouterLink to="/buscar" class="client-menu-item" @click="clientMenuOpen = false">
+                🔍 Buscar piezas
+              </RouterLink>
+              <button class="client-menu-item client-menu-btn" @click="clientMenuOpen = false; openModal()">
+                📨 Solicitar materiales
+              </button>
+            </div>
+          </div>
           <RouterLink to="/vendedor" class="btn-nav btn-solid">Entrar como Vendedor</RouterLink>
           <ThemeToggle />
         </div>
@@ -21,7 +36,9 @@
       <!-- Mobile menu -->
       <div class="mobile-menu" :class="{ open: mobileOpen }">
         <div class="mobile-theme"><ThemeToggle /></div>
-        <RouterLink to="/client" class="mobile-link" @click="mobileOpen = false">Entrar como Cliente</RouterLink>
+        <RouterLink to="/client" class="mobile-link" @click="mobileOpen = false">✨ Calcular materiales</RouterLink>
+        <RouterLink to="/buscar" class="mobile-link" @click="mobileOpen = false">🔍 Buscar piezas</RouterLink>
+        <button class="mobile-link mobile-link-btn" @click="mobileOpen = false; openModal()">📨 Solicitar materiales</button>
         <RouterLink to="/vendedor" class="mobile-link mobile-link--solid" @click="mobileOpen = false">Entrar como Vendedor</RouterLink>
       </div>
     </nav>
@@ -229,7 +246,7 @@
           <span class="nav-icon">🏗️</span>
           <span class="nav-logo">Construye</span>
         </div>
-        <p class="footer-copy">© 2026 Construye. Asistencia Técnica para el Hogar.</p>
+        <p class="footer-copy">© 2025 Laynierpd@gmail.com — Construye</p>
       </div>
     </footer>
 
@@ -240,16 +257,32 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { RouterLink } from 'vue-router';
 import ThemeToggle from '../components/ThemeToggle.vue';
+import { openSolicitudModal } from '../composables/useSolicitudModal';
+
+function openModal() { openSolicitudModal(); }
 
 const isScrolled = ref(false);
 const mobileOpen = ref(false);
+const clientMenuOpen = ref(false);
 
 function onScroll() {
   isScrolled.value = window.scrollY > 20;
 }
 
-onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }));
-onUnmounted(() => window.removeEventListener('scroll', onScroll));
+function onDocClick(e: MouseEvent) {
+  if (!(e.target as Element).closest('.client-dropdown')) {
+    clientMenuOpen.value = false;
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', onScroll, { passive: true });
+  document.addEventListener('click', onDocClick);
+});
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll);
+  document.removeEventListener('click', onDocClick);
+});
 
 const reviews = [
   {
@@ -356,6 +389,11 @@ const reviews = [
   text-decoration: none;
   transition: all 0.2s;
   white-space: nowrap;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
 }
 
 .btn-outline {
@@ -374,6 +412,47 @@ const reviews = [
   border: 1.5px solid transparent;
 }
 .btn-solid:hover { background: var(--accent-hover); }
+
+/* Client dropdown */
+.client-dropdown { position: relative; }
+
+.client-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  min-width: 200px;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.client-menu-item {
+  display: block;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.15s, color 0.15s;
+  text-align: left;
+}
+
+.client-menu-item:hover {
+  background: var(--bg-card-hover);
+  color: var(--text);
+}
+
+.client-menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  border-top: 1px solid var(--border-subtle);
+}
 
 /* Hamburger */
 .nav-hamburger {
@@ -432,6 +511,15 @@ const reviews = [
   color: var(--text-on-accent);
 }
 .mobile-link--solid:hover { background: var(--accent-hover); }
+
+.mobile-link-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+  text-align: left;
+}
 
 /* ─── HERO ──────────────────────────────────────────────── */
 .hero {

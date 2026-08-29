@@ -1,5 +1,6 @@
 <template>
   <div class="vendor-page">
+
     <nav class="nav">
       <RouterLink to="/" class="nav-brand">
         <span class="nav-icon">🏗️</span>
@@ -8,85 +9,213 @@
       <ThemeToggle />
     </nav>
 
-    <div class="content">
-      <div class="illustration">
-        <svg viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg" class="wip-svg">
-          <!-- Hard hat -->
-          <ellipse cx="140" cy="180" rx="90" ry="18" fill="#FFD600" opacity="0.18"/>
-          <rect x="60" y="120" width="160" height="60" rx="8" fill="#FFD600"/>
-          <path d="M60 145 Q140 90 220 145" fill="#FFB300"/>
-          <rect x="50" y="148" width="180" height="14" rx="7" fill="#FF8F00"/>
-          <!-- Brim -->
-          <rect x="38" y="154" width="204" height="10" rx="5" fill="#FFB300"/>
-          <!-- Hard hat stripe -->
-          <rect x="80" y="125" width="120" height="8" rx="4" fill="#fff" opacity="0.25"/>
-          <!-- Gear left -->
-          <g transform="translate(42,60)">
-            <circle cx="28" cy="28" r="20" fill="none" stroke="#E67E22" stroke-width="5"/>
-            <circle cx="28" cy="28" r="8" fill="#E67E22"/>
-            <rect x="24" y="4" width="8" height="10" rx="4" fill="#E67E22"/>
-            <rect x="24" y="42" width="8" height="10" rx="4" fill="#E67E22"/>
-            <rect x="4" y="24" width="10" height="8" rx="4" fill="#E67E22"/>
-            <rect x="42" y="24" width="10" height="8" rx="4" fill="#E67E22"/>
-            <rect x="10" y="10" width="8" height="8" rx="3" fill="#E67E22" transform="rotate(45 14 14)"/>
-            <rect x="38" y="10" width="8" height="8" rx="3" fill="#E67E22" transform="rotate(45 42 14)"/>
-            <rect x="10" y="38" width="8" height="8" rx="3" fill="#E67E22" transform="rotate(45 14 42)"/>
-            <rect x="38" y="38" width="8" height="8" rx="3" fill="#E67E22" transform="rotate(45 42 42)"/>
-          </g>
-          <!-- Gear right -->
-          <g transform="translate(178,48)">
-            <circle cx="24" cy="24" r="16" fill="none" stroke="#27AE60" stroke-width="4"/>
-            <circle cx="24" cy="24" r="6" fill="#27AE60"/>
-            <rect x="20" y="4" width="8" height="8" rx="4" fill="#27AE60"/>
-            <rect x="20" y="36" width="8" height="8" rx="4" fill="#27AE60"/>
-            <rect x="4" y="20" width="8" height="8" rx="4" fill="#27AE60"/>
-            <rect x="36" y="20" width="8" height="8" rx="4" fill="#27AE60"/>
-          </g>
-          <!-- Wrench -->
-          <g transform="translate(130,30) rotate(35)">
-            <rect x="0" y="0" width="12" height="55" rx="5" fill="#7F8C8D"/>
-            <path d="M-4 0 Q6 -14 16 0" fill="#95A5A6" stroke="#7F8C8D" stroke-width="2"/>
-            <path d="M-4 55 Q6 69 16 55" fill="#95A5A6" stroke="#7F8C8D" stroke-width="2"/>
-          </g>
-          <!-- Dots decoration -->
-          <circle cx="72" cy="200" r="5" fill="#E67E22" opacity="0.4"/>
-          <circle cx="200" cy="210" r="4" fill="#3498DB" opacity="0.4"/>
-          <circle cx="240" cy="85" r="6" fill="#9B59B6" opacity="0.3"/>
-          <circle cx="35" cy="155" r="4" fill="#27AE60" opacity="0.4"/>
-        </svg>
+    <div class="page-content">
+
+      <div class="tabs">
+        <button
+          class="tab"
+          :class="{ active: activeTab === 'publicar' }"
+          @click="switchTab('publicar')"
+        >
+          📦 Publicar pieza
+        </button>
+        <button
+          class="tab"
+          :class="{ active: activeTab === 'solicitudes' }"
+          @click="switchTab('solicitudes')"
+        >
+          📋 Solicitudes
+        </button>
       </div>
 
-      <div class="text-block">
-        <span class="badge">Próximamente</span>
-        <h1 class="title">Portal de Vendedores</h1>
-        <p class="subtitle">
-          Estamos construyendo algo increíble para ti. El acceso para proveedores y tiendas de materiales estará disponible muy pronto.
-        </p>
-        <div class="features-preview">
-          <div class="feature-item">
-            <span class="feat-icon">📦</span>
-            <span>Gestión de inventario en tiempo real</span>
+      <!-- ── PUBLICAR PIEZA ─────────────────────────── -->
+      <section v-if="activeTab === 'publicar'" class="section">
+        <h2 class="section-title">Publicar pieza disponible</h2>
+
+        <div v-if="publishSuccess" class="success-banner">
+          ✅ Pieza publicada correctamente.
+        </div>
+        <div v-if="publishError" class="error-banner">⚠️ {{ publishError }}</div>
+
+        <form class="form-card" @submit.prevent="handlePublish">
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Nombre de la pieza <span class="req">*</span></label>
+              <input v-model="form.nombre" class="field-input" type="text" placeholder="Ej: Tubo PVC" required />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Calibre / Grosor</label>
+              <input v-model="form.calibre" class="field-input" type="text" placeholder='Ej: 1/2", 14 AWG' />
+            </div>
           </div>
-          <div class="feature-item">
-            <span class="feat-icon">📊</span>
-            <span>Dashboard de ventas y pedidos</span>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Stock disponible <span class="req">*</span></label>
+              <input v-model.number="form.stock" class="field-input" type="number" min="1" placeholder="Ej: 50" required />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Provincia <span class="req">*</span></label>
+              <select v-model="form.provincia" class="field-input" required @change="form.municipio = ''">
+                <option value="" disabled>Seleccionar...</option>
+                <option v-for="p in PROVINCIAS" :key="p" :value="p">{{ p }}</option>
+              </select>
+            </div>
           </div>
-          <div class="feature-item">
-            <span class="feat-icon">🤝</span>
-            <span>Conexión directa con clientes</span>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Municipio <span class="req">*</span></label>
+              <select v-model="form.municipio" class="field-input" required :disabled="!form.provincia">
+                <option value="" disabled>{{ form.provincia ? 'Seleccionar...' : 'Primero elige provincia' }}</option>
+                <option v-for="m in municipiosForm" :key="m" :value="m">{{ m }}</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Teléfono del vendedor <span class="req">*</span></label>
+              <input v-model="form.telefonoVendedor" class="field-input" type="tel" placeholder="Ej: 55551234" required />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Nombre del vendedor</label>
+            <input
+              v-model="form.nombreVendedor"
+              class="field-input"
+              type="text"
+              placeholder="Se mostrará como vendedor_0001 si se deja vacío"
+            />
+          </div>
+
+          <button type="submit" class="submit-btn" :disabled="publishing">
+            <span v-if="publishing" class="spinner"></span>
+            {{ publishing ? 'Publicando...' : '📦 Publicar pieza' }}
+          </button>
+        </form>
+      </section>
+
+      <!-- ── SOLICITUDES ────────────────────────────── -->
+      <section v-else class="section">
+        <h2 class="section-title">Solicitudes de clientes</h2>
+
+        <div v-if="loadingSolicitudes" class="loading-msg">Cargando solicitudes...</div>
+        <div v-else-if="solicitudesError" class="error-banner">⚠️ {{ solicitudesError }}</div>
+        <div v-else-if="solicitudes.length === 0" class="empty-msg">
+          No hay solicitudes registradas aún.
+        </div>
+        <div v-else class="cards-grid">
+          <div v-for="s in solicitudes" :key="s.id" class="sol-card">
+            <div class="sol-header">
+              <span class="sol-pieza">{{ s.piezaNombre }}</span>
+              <span class="badge" :class="s.prefiereMensajeria ? 'badge-msg' : 'badge-pickup'">
+                {{ s.prefiereMensajeria ? '💬 Prefiere mensajería' : '🤝 Puede recoger' }}
+              </span>
+            </div>
+            <div class="sol-meta">
+              <span v-if="s.calibre" class="meta-item">Calibre: <strong>{{ s.calibre }}</strong></span>
+              <span class="meta-item">Cantidad: <strong>{{ s.cantidad }}</strong></span>
+            </div>
+            <p v-if="s.nota" class="sol-nota">{{ s.nota }}</p>
+            <div class="sol-footer">
+              <span class="sol-date">{{ formatDate(s.createdAt) }}</span>
+              <a
+                :href="`https://wa.me/${s.telefonoCliente}?text=Hola%2C%20vi%20tu%20solicitud%20en%20Construye...`"
+                target="_blank"
+                rel="noopener"
+                class="wa-btn"
+              >
+                WhatsApp →
+              </a>
+            </div>
           </div>
         </div>
-        <RouterLink to="/" class="back-btn">
-          ← Volver al inicio
-        </RouterLink>
-      </div>
+      </section>
+
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 import ThemeToggle from '../components/ThemeToggle.vue';
+import { PROVINCIAS, getMunicipios } from '../data/ubicaciones';
+import { postPieza, fetchSolicitudes, type Solicitud } from '../utils/api';
+
+const activeTab = ref<'publicar' | 'solicitudes'>('publicar');
+
+// ── Form state ──────────────────────────────────────────
+const form = ref({
+  nombre: '',
+  calibre: '',
+  stock: null as number | null,
+  provincia: '',
+  municipio: '',
+  telefonoVendedor: '',
+  nombreVendedor: '',
+});
+
+const publishing = ref(false);
+const publishSuccess = ref(false);
+const publishError = ref('');
+
+const municipiosForm = computed(() => getMunicipios(form.value.provincia));
+
+async function handlePublish() {
+  publishing.value = true;
+  publishSuccess.value = false;
+  publishError.value = '';
+  try {
+    await postPieza({
+      nombre: form.value.nombre,
+      calibre: form.value.calibre || undefined,
+      stock: form.value.stock ?? 0,
+      provincia: form.value.provincia,
+      municipio: form.value.municipio,
+      telefonoVendedor: form.value.telefonoVendedor,
+      nombreVendedor: form.value.nombreVendedor || undefined,
+    });
+    publishSuccess.value = true;
+    form.value = { nombre: '', calibre: '', stock: null, provincia: '', municipio: '', telefonoVendedor: '', nombreVendedor: '' };
+  } catch (err) {
+    publishError.value = err instanceof Error ? err.message : 'Error desconocido';
+  } finally {
+    publishing.value = false;
+  }
+}
+
+// ── Solicitudes state ───────────────────────────────────
+const solicitudes = ref<Solicitud[]>([]);
+const loadingSolicitudes = ref(false);
+const solicitudesError = ref('');
+
+async function loadSolicitudes() {
+  loadingSolicitudes.value = true;
+  solicitudesError.value = '';
+  try {
+    solicitudes.value = await fetchSolicitudes();
+  } catch (err) {
+    solicitudesError.value = err instanceof Error ? err.message : 'Error al cargar solicitudes';
+  } finally {
+    loadingSolicitudes.value = false;
+  }
+}
+
+function switchTab(tab: 'publicar' | 'solicitudes') {
+  activeTab.value = tab;
+  if (tab === 'solicitudes' && solicitudes.value.length === 0) {
+    loadSolicitudes();
+  }
+}
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString('es-CU', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+onMounted(() => {
+  // Pre-load solicitudes in background
+  loadSolicitudes();
+});
 </script>
 
 <style scoped>
@@ -94,7 +223,6 @@ import ThemeToggle from '../components/ThemeToggle.vue';
   min-height: 100vh;
   background-color: var(--bg-base);
   color: var(--text);
-  font-family: inherit;
 }
 
 /* Nav */
@@ -102,143 +230,296 @@ import ThemeToggle from '../components/ThemeToggle.vue';
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem 2.5rem;
+  padding: 1.25rem 2rem;
   border-bottom: 1px solid var(--border-subtle);
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 40;
 }
 
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.6rem;
   text-decoration: none;
 }
 
-.nav-icon {
-  font-size: 1.6rem;
-}
+.nav-icon { font-size: 1.5rem; }
 
 .nav-logo {
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 800;
   color: var(--text);
   letter-spacing: -0.3px;
 }
 
-/* Content layout */
-.content {
-  max-width: 900px;
+/* Page layout */
+.page-content {
+  max-width: 820px;
   margin: 0 auto;
-  padding: 4rem 2rem;
+  padding: 2.5rem 1.25rem;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+
+.tab {
+  padding: 0.65rem 1.25rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  margin-bottom: -1px;
+}
+
+.tab:hover { color: var(--text); }
+.tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* Section */
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.3px;
+}
+
+/* Form */
+.form-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 580px) {
+  .field-row { grid-template-columns: 1fr; }
+}
+
+.field-group { display: flex; flex-direction: column; gap: 0.35rem; }
+
+.field-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.req { color: #e05252; }
+
+.field-input {
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field-input::placeholder { color: var(--text-faint); }
+.field-input:focus {
+  outline: none;
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+.field-input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+select.field-input {
+  background-color: var(--bg-elevated);
+  color: var(--text);
+}
+select.field-input option {
+  background-color: var(--bg-elevated);
+  color: var(--text);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 0.85rem;
+  margin-top: 1.25rem;
+  background: var(--accent-btn);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
   display: flex;
   align-items: center;
-  gap: 5rem;
-  min-height: calc(100vh - 80px);
-}
-
-@media (max-width: 700px) {
-  .content {
-    flex-direction: column;
-    gap: 2.5rem;
-    padding: 2.5rem 1.25rem;
-    text-align: center;
-  }
-}
-
-/* SVG illustration */
-.illustration {
-  flex-shrink: 0;
-  display: flex;
   justify-content: center;
+  gap: 0.5rem;
+  transition: background 0.2s, transform 0.15s;
 }
 
-.wip-svg {
-  width: 240px;
-  height: 240px;
-  filter: drop-shadow(0 0 40px rgba(230, 126, 34, 0.25));
-  animation: float 4s ease-in-out infinite;
+.submit-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-12px); }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
 }
 
-/* Text block */
-.text-block {
-  flex: 1;
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Banners */
+.success-banner {
+  background: rgba(39,174,96,0.12);
+  border: 1px solid rgba(39,174,96,0.3);
+  color: #27ae60;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.error-banner {
+  background: rgba(224,82,82,0.1);
+  border: 1px solid rgba(224,82,82,0.3);
+  color: #c0392b;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+/* Solicitudes */
+.loading-msg, .empty-msg {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-faint);
+  font-size: 0.95rem;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.sol-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.sol-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sol-pieza {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
 }
 
 .badge {
-  display: inline-block;
-  background: var(--accent-subtle);
-  color: var(--accent);
-  border: 1px solid var(--accent-border);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
   border-radius: 100px;
-  padding: 0.3rem 1rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  margin-bottom: 1.25rem;
+  white-space: nowrap;
 }
 
-.title {
-  font-size: clamp(2rem, 5vw, 2.8rem);
-  font-weight: 800;
-  letter-spacing: -1px;
-  line-height: 1.1;
-  margin-bottom: 1rem;
-  color: var(--text);
+.badge-msg {
+  background: var(--accent-subtle);
+  color: var(--accent-text);
+  border: 1px solid var(--accent-border);
 }
 
-.subtitle {
-  font-size: 1rem;
-  color: var(--text-muted);
-  line-height: 1.7;
-  margin-bottom: 2rem;
-  max-width: 420px;
+.badge-pickup {
+  background: rgba(39,174,96,0.1);
+  color: #27ae60;
+  border: 1px solid rgba(39,174,96,0.25);
 }
 
-/* Feature preview list */
-.features-preview {
+.sol-meta {
   display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  margin-bottom: 2.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.feature-item {
+.meta-item {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.sol-nota {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  background: var(--bg-card-hover);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--accent-border);
+}
+
+.sol-footer {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 0.9rem;
-  color: var(--text-muted);
+  justify-content: space-between;
+  margin-top: 0.25rem;
 }
 
-.feat-icon {
-  font-size: 1.1rem;
-  width: 28px;
-  flex-shrink: 0;
+.sol-date {
+  font-size: 0.75rem;
+  color: var(--text-faint);
 }
 
-/* Back button */
-.back-btn {
+.wa-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.75rem;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  background: #25d366;
+  color: #fff;
   border-radius: 100px;
-  border: 1.5px solid var(--border-strong);
-  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
   text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  transition: background 0.2s;
 }
 
-.back-btn:hover {
-  border-color: var(--text);
-  color: var(--text);
-  background: var(--bg-card-hover);
-}
+.wa-btn:hover { background: #1daa52; }
 </style>

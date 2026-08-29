@@ -131,6 +131,12 @@
         @goBack="apiResponse = null"
       />
     </main>
+
+  <button class="fab" @click="openSolicitudModal()" aria-label="Solicitar materiales">
+    <span class="fab-icon">📨</span>
+    <span class="fab-label">Solicitar materiales</span>
+  </button>
+
   </div>
 </template>
 
@@ -141,6 +147,7 @@ import ThemeToggle from '../components/ThemeToggle.vue';
 import type { FormData, Phase1Response } from '../types';
 import { sendPhase1Request } from '../utils/api';
 import Phase1Results from '../components/Phase1Results.vue';
+import { openSolicitudModal } from '../composables/useSolicitudModal';
 
 const specialties = [
   {
@@ -538,5 +545,41 @@ async function handleSubmit() {
   padding: 2.5rem;
   color: var(--text-faint);
   font-size: 0.95rem;
+}
+
+/* ─── FAB ─── */
+.fab {
+  position: fixed;
+  bottom: 1.75rem;
+  right: 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--accent-btn);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 100px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 20px rgba(196, 85, 0, 0.4);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  z-index: 50;
+}
+
+.fab:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(196, 85, 0, 0.5);
+}
+
+.fab-icon { font-size: 1rem; }
+
+@media (max-width: 500px) {
+  .fab-label { display: none; }
+  .fab { padding: 0.85rem; border-radius: 50%; }
+  .fab-icon { font-size: 1.2rem; }
 }
 </style>
