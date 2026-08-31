@@ -4,10 +4,15 @@ import { cors } from 'hono/cors';
 import { serve } from '@hono/node-server';
 import { processPhase1 } from './services/phase1Service.js';
 import type { Phase1Request } from './types.js';
+import piezasRouter from './routes/piezas.js';
+import solicitudesRouter from './routes/solicitudes.js';
 
 const app = new Hono();
 
 app.use('*', cors());
+
+app.route('/piezas', piezasRouter);
+app.route('/solicitudes', solicitudesRouter);
 
 app.get('/health', (c) => {
     return c.json({ status: 'ok', message: 'Construye API server is running' });

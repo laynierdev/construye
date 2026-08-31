@@ -1,255 +1,152 @@
-# 📚 Índice de Documentación - Construye
+# Índice de Documentación — Construye
 
-## 🎯 ¿Por dónde empiezo?
+## ¿Por dónde empiezo?
 
-### 1️⃣ Si es tu PRIMERA VEZ
+### Si es tu primera vez
 
 Lee en este orden:
 
 1. **[QUICK_START.md](./QUICK_START.md)** (5 min)
    - Instalación en 5 pasos
    - Verificar que todo funciona localmente
-   - ¿Qué ves en pantalla?
 
 2. **[README.md](./README.md)** (10 min)
    - Descripción general del proyecto
-   - Stack tecnológico
-   - Estructura de carpetas
+   - Stack tecnológico y rutas del cliente
+   - Variables de entorno y endpoints
 
 3. **[DEVELOPMENT.md](./DEVELOPMENT.md)** (5 min)
-   - Cómo ejecutar backend + frontend
-   - Variables de entorno
-   - Próximos pasos
+   - Cómo ejecutar backend + frontend en paralelo
+   - Scripts disponibles
 
 ---
 
-### 2️⃣ Si quieres ENTENDER LA ARQUITECTURA
+### Si quieres entender la arquitectura
 
-Lee:
-
-1. **[MONOREPO_EXPLAINED.md](./MONOREPO_EXPLAINED.md)** ⭐ (ARQUITECTURA DE REPOSITORIO POR WORSPACES)
-   - ¿Por qué hay package.json en la raíz?
-   - Cómo funciona npm workspaces
-   - Diferencia entre desarrollo y deployment
-   - Diagramas visuales
-
-2. **[ARCHITECTURE.md](./ARCHITECTURE.md)** (15 min)
-   - Diagrama del flujo de datos
-   - Cómo se comunican frontend ↔ backend
-   - Modelos de base de datos (Prisma)
-   - Stack tecnológico explicado
+1. **[ARCHITECTURE.md](./ARCHITECTURE.md)** (15 min)
+   - Diagrama general cliente ↔ servidor ↔ MySQL ↔ Gemini
+   - Capas del servidor (routes → controllers → services → repositories)
+   - Modelos de base de datos (Vendedor, Pieza, Solicitud)
+   - Flujos de datos: calcular materiales, publicar pieza, modal de solicitud
+   - Estado global del cliente (useTheme, useSolicitudModal)
+   - Tema dark/light y decisiones de diseño
 
 ---
 
-### 3️⃣ Si quieres DESPLEGAR A PRODUCCIÓN
+### Documentación específica de cada carpeta
 
-Lee en orden:
+- **[server/README.md](./server/README.md)** — Backend (Hono + Prisma + MySQL)
+  - Rutas de API, modelos, variables de entorno, scripts
 
-1. **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** ⭐ COMIENZA AQUÍ (15 min)
-   - Matriz de decisión (¿Cuál opción elegir?)
-   - Comparativa de costos
-   - **MI RECOMENDACIÓN:** Vercel + Railway
-   - Checklist de deployment
-
-2. **Luego, ELIGE UNO:**
-   - **[DEPLOY_VERCEL.md](./DEPLOY_VERCEL.md)** - Frontend en Vercel
-   - **[DEPLOY_NETLIFY.md](./DEPLOY_NETLIFY.md)** - Frontend en Netlify
-   - **[DEPLOY_RAILWAY.md](./DEPLOY_RAILWAY.md)** - Backend en Railway
-   - **[DEPLOY_AZURE.md](./DEPLOY_AZURE.md)** - Todo en Azure
+- **[client/README.md](./client/README.md)** — Frontend (Vue 3 + Vite)
+  - Componentes, composables, llamadas HTTP, estilos
 
 ---
 
-### 4️⃣ DOCUMENTACIÓN ESPECÍFICA DE CADA CARPETA
-
-- **[server/README.md](./server/README.md)** - Backend (Hono + Prisma)
-  - Rutas de API
-  - Base de datos
-  - Variables de entorno
-  - Scripts disponibles
-
-- **[client/README.md](./client/README.md)** - Frontend (Vue 3 + Vite)
-  - Componentes
-  - Llamadas HTTP
-  - Estilos (W3.CSS)
-  - Troubleshooting
-
----
-
-## 📖 Referencia Rápida
-
-### Archivos del Proyecto
+## Referencia rápida — Archivos del proyecto
 
 ```
 Construye/
 │
-├── README.md                      ← EMPEZAR AQUÍ (descripción general)
-├── QUICK_START.md                 ← Instalación 5 min
-├── DEVELOPMENT.md                 ← Cómo desarrollar
-├── ARCHITECTURE.md                ← Diagramas técnicos
-├── MONOREPO_EXPLAINED.md          ← TÚ PREGUNTASTE ESTO ⭐
-│
-├── DEPLOYMENT.md                  ← Estrategias de deployment
-├── DEPLOYMENT_GUIDE.md            ← COMIENZA AQUÍ para deployment
-├── DEPLOY_VERCEL.md               ← Frontend en Vercel
-├── DEPLOY_NETLIFY.md              ← Frontend en Netlify
-├── DEPLOY_RAILWAY.md              ← Backend en Railway
-├── DEPLOY_AZURE.md                ← Todo en Azure
-│
-├── SCRIPTS.md                     ← Scripts de npm disponibles
-├── DOCUMENTATION_INDEX.md         ← Este archivo
+├── README.md                  ← Descripción general, stack, rutas, endpoints
+├── QUICK_START.md             ← Instalación en 5 minutos
+├── DEVELOPMENT.md             ← Comandos de desarrollo
+├── ARCHITECTURE.md            ← Diagramas técnicos y decisiones
+├── SCRIPTS.md                 ← Scripts npm disponibles
+├── DOCUMENTATION_INDEX.md    ← Este archivo
 │
 ├── server/
-│   ├── README.md                  ← Docs del servidor
-│   ├── package.json
-│   ├── src/index.ts
-│   └── prisma/schema.prisma
+│   ├── README.md
+│   ├── prisma/schema.prisma   ← Modelos Vendedor, Pieza, Solicitud
+│   └── src/
+│       ├── routes/
+│       ├── controllers/
+│       ├── services/
+│       └── repositories/
 │
 └── client/
-    ├── README.md                  ← Docs del cliente
-    ├── package.json
-    ├── src/App.vue
-    └── vite.config.ts
+    ├── README.md
+    └── src/
+        ├── views/             ← LandingPage, ClientApp, ClientPiezas, VendorPage
+        ├── components/        ← ThemeToggle, Phase1Results, SolicitudModal
+        ├── composables/       ← useTheme, useSolicitudModal
+        ├── data/              ← ubicaciones.ts (provincias y municipios)
+        ├── router/
+        └── utils/api.ts       ← Todas las llamadas HTTP centralizadas
 ```
 
 ---
 
-## 🎯 Preguntas Frecuentes
-
-### "¿Por qué hay dos package.json?"
-
-→ Lee **[MONOREPO_EXPLAINED.md](./MONOREPO_EXPLAINED.md)**
-
-Respuesta corta: Es monorepo en desarrollo, pero se separan completamente en deployment.
-
----
-
-### "¿Cómo separo los proyectos para desplegar?"
-
-→ Lee **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** + **[MONOREPO_EXPLAINED.md](./MONOREPO_EXPLAINED.md)**
-
-Respuesta corta: Cada plataforma (Vercel, Railway) toma solo su carpeta automáticamente.
-
----
-
-### "¿Cuál es la mejor forma de desplegar?"
-
-→ Lee **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)**
-
-**Mi recomendación:** Vercel (frontend) + Railway (backend)
-- ✅ Simple (10 min setup)
-- ✅ Gratis con limits generosos
-- ✅ Auto-deploy con git push
-- 💰 ~$12/mes después (vs $38 en Azure)
-
----
-
-### "¿Cómo funcionan los workspaces de npm?"
-
-→ Lee **[MONOREPO_EXPLAINED.md](./MONOREPO_EXPLAINED.md)**
-
-Respuesta corta: El package.json raíz coordina las dependencias de ambas carpetas.
-
----
+## Preguntas frecuentes
 
 ### "¿Cómo conecto frontend con backend?"
 
-→ Lee **[ARCHITECTURE.md](./ARCHITECTURE.md)** → Sección "Flujo de Datos"
+→ Lee **[ARCHITECTURE.md](./ARCHITECTURE.md)**
 
-Respuesta corta: Variable de entorno `VITE_API_URL` apunta a la URL del backend.
-
----
-
-### "¿Qué pasa cuando hago `git push`?"
-
-→ Lee **[MONOREPO_EXPLAINED.md](./MONOREPO_EXPLAINED.md)** → Sección "Auto-deployment"
-
-Respuesta corta:
-1. GitHub recibe cambios
-2. Railway redeploy de `server/`
-3. Vercel rebuild de `client/`
-4. Todo se actualiza en ~2 minutos
+Respuesta corta: la variable `VITE_API_URL` en `client/.env` apunta al servidor. Todas las llamadas pasan por `utils/api.ts`.
 
 ---
 
-## 🏃 Inicio Rápido (TL;DR)
+### "¿Cómo abro el modal de solicitud desde cualquier vista?"
+
+```typescript
+import { openSolicitudModal } from '@/composables/useSolicitudModal'
+
+// Sin prefill
+openSolicitudModal()
+
+// Con prefill (desde una pieza)
+openSolicitudModal({ piezaNombre: 'Tubo 3/4"', calibre: '3/4"' })
+```
+
+El modal está montado en `App.vue` y está disponible en todas las rutas.
+
+---
+
+### "¿Cómo agrego una provincia o municipio?"
+
+→ Edita `client/src/data/ubicaciones.ts`. El array `UBICACIONES` tiene el formato `{ provincia, municipios[] }`. Los selects en `ClientPiezas` y `VendorPage` lo consumen automáticamente.
+
+---
+
+### "¿Cómo agrego un endpoint nuevo al servidor?"
+
+Sigue el patrón de capas estricto:
+
+1. `server/src/repositories/` — query Prisma
+2. `server/src/services/` — lógica de negocio, llama al repository
+3. `server/src/controllers/` — valida el body, llama al service, forma la respuesta
+4. `server/src/routes/` — monta el handler Hono
+5. `server/src/index.ts` — registra el router con `app.route()`
+
+---
+
+## Inicio rápido (TL;DR)
 
 ```bash
-# 1. Instalar
-npm install
+# Terminal 1 — servidor
+cd server && npm install && npx prisma migrate dev && npm run dev
 
-# 2. Desarrollar (2 terminales)
-npm run dev:server  # Terminal 1
-npm run dev:client  # Terminal 2
-
-# 3. Desplegar (cuando estés listo)
-# Lee DEPLOYMENT_GUIDE.md primero
-
-# 4. Elegir plataforma
-# Recomendación: Vercel + Railway
-# Lee DEPLOY_VERCEL.md + DEPLOY_RAILWAY.md
+# Terminal 2 — cliente
+cd client && npm install && npm run dev
 ```
 
----
-
-## 📚 Tabla Rápida de Contenidos
-
-| Documento | Duración | Para Quién |
-|-----------|----------|-----------|
-| **QUICK_START.md** | 5 min | Quiero empezar YA |
-| **README.md** | 10 min | Quiero entender qué es |
-| **MONOREPO_EXPLAINED.md** | 15 min | Quiero entender la arquitectura |
-| **ARCHITECTURE.md** | 15 min | Quiero saber cómo funciona todo |
-| **DEPLOYMENT_GUIDE.md** | 10 min | Quiero elegir dónde desplegar |
-| **DEPLOY_VERCEL.md** | 10 min | Voy a desplegar en Vercel |
-| **DEPLOY_RAILWAY.md** | 10 min | Voy a desplegar en Railway |
-| **DEPLOY_AZURE.md** | 15 min | Voy a desplegar en Azure |
+Cliente en http://localhost:5173 · API en http://localhost:3000
 
 ---
 
-## 🎓 Curva de Aprendizaje
+## Tabla de documentos
 
-```
-Horas      Documentación
-─────────────────────────────────────────
-0 min      QUICK_START.md ← EMPEZAR
-│          
-5 min      ↓ npm install & run
-│          
-10 min     README.md
-│          
-20 min     DEVELOPMENT.md
-│          
-30 min     ↓ Entiendo el proyecto
-│          
-40 min     MONOREPO_EXPLAINED.md
-│          ↓ Entiendo separación
-50 min     
-│          
-60 min     ARCHITECTURE.md ← Ahora eres expert
-│          DEPLOYMENT_GUIDE.md
-│          
-120 min    DEPLOY_*.md (elige uno)
-│          ↓ Desplegado a producción
-│          
-...        ¡Desarrollando Fase 2! 🚀
-```
+| Documento | Para quién |
+|-----------|-----------|
+| **QUICK_START.md** | Quiero empezar ya |
+| **README.md** | Quiero entender qué es el proyecto |
+| **ARCHITECTURE.md** | Quiero entender cómo funciona todo |
+| **DEVELOPMENT.md** | Quiero saber los comandos de desarrollo |
+| **SCRIPTS.md** | Quiero ver todos los scripts npm |
+| **server/README.md** | Documentación específica del backend |
+| **client/README.md** | Documentación específica del frontend |
 
 ---
 
-## 💡 Pro Tips
-
-1. **Usa Ctrl+F (Find)** en los archivos para buscar palabras clave
-2. **Copia los comandos exactamente** como aparecen
-3. **Sigue los checklists** paso a paso
-4. **Verifica cada comando** localmente antes de desplegar
-5. **Guarda este índice** en tu navegador para referencia rápida
-
----
-
-## 🚀 Próximos Pasos
-....
----
-
-**¿Perdido?** Empieza con [QUICK_START.md](./QUICK_START.md) 🚀
-
-**¿Necesitas responder tu pregunta sobre workspaces?** Lee [MONOREPO_EXPLAINED.md](./MONOREPO_EXPLAINED.md) ⭐
+*Última actualización: agosto 2025*

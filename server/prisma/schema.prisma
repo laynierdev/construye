@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,68 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Technical specialty category
-model Categoria {
-  id        Int     @id @default(autoincrement())
-  nombre    String  @unique
-  descripcion String?
-  piezas    Pieza[]
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// Required parts/materials
-model Pieza {
-  id          Int     @id @default(autoincrement())
-  nombre      String
-  descripcion String?
-  calibre     String? // Thickness, diameter, specification
-  unidad      String  @default("unit") // unit, meter, kg, etc.
-  
-  categoria   Categoria @relation(fields: [categoriaId], references: [id], onDelete: Cascade)
-  categoriaId Int
-  
-  inventarios Inventario[]
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  @@index([categoriaId])
-}
-
-// Vendors/stores (for Phase 2)
 model Vendedor {
   id        Int     @id @default(autoincrement())
-  nombre    String
-  ubicacion String?
-  latitud   Float?
-  longitud  Float?
-  telefono  String?
-  
-  inventarios Inventario[]
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  nombre    String?
+  telefono  String
+  provincia String
+  municipio String
+  piezas    Pieza[]
 }
 
-// Inventory: relationship between parts and vendors (with prices)
-model Inventario {
-  id        Int     @id @default(autoincrement())
-  
-  pieza     Pieza @relation(fields: [piezaId], references: [id], onDelete: Cascade)
-  piezaId   Int
-  
-  vendedor  Vendedor @relation(fields: [vendedorId], references: [id], onDelete: Cascade)
+model Pieza {
+  id         Int      @id @default(autoincrement())
+  nombre     String
+  calibre    String?
+  stock      Int
+  provincia  String
+  municipio  String
+  vendedor   Vendedor @relation(fields: [vendedorId], references: [id])
   vendedorId Int
-  
-  cantidad  Int
-  precio    Float
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  @@unique([piezaId, vendedorId])
-  @@index([piezaId])
-  @@index([vendedorId])
+}
+
+model Solicitud {
+  id                 Int      @id @default(autoincrement())
+  piezaNombre        String
+  calibre            String?
+  cantidad           Int
+  nota               String?
+  telefonoCliente    String
+  prefiereMensajeria Boolean  @default(false)
+  vendedorId         Int?
+  createdAt          DateTime @default(now())
 }

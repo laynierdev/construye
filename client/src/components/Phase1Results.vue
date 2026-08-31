@@ -133,19 +133,21 @@ const cleanedInstructions = computed(() =>
 .results {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 /* ─── Header ─── */
 .results-header {
   border-radius: var(--radius);
-  padding: 1.5rem;
+  padding: 1.5rem 1.75rem;
   color: white;
+  position: relative;
+  overflow: hidden;
 }
 
-.specialty-plumbing  { background: linear-gradient(135deg, #1a5276, #2980b9); }
-.specialty-masonry   { background: linear-gradient(135deg, #4a4a4a, #7f8c8d); }
-.specialty-electrical { background: linear-gradient(135deg, #9a6b00, #f39c12); }
+.specialty-plumbing   { background: var(--sp-plumbing-bg);   border: 1px solid var(--sp-plumbing-border); }
+.specialty-masonry    { background: var(--sp-masonry-bg);    border: 1px solid var(--sp-masonry-border); }
+.specialty-electrical { background: var(--sp-electrical-bg); border: 1px solid var(--sp-electrical-border); }
 
 .results-header-content {
   display: flex;
@@ -168,14 +170,16 @@ const cleanedInstructions = computed(() =>
 
 .results-title {
   font-size: 1.4rem;
-  font-weight: 700;
-  letter-spacing: -0.3px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--sp-text);
 }
 
 .results-subtitle {
-  font-size: 0.875rem;
-  opacity: 0.85;
+  font-size: 0.85rem;
+  opacity: 0.65;
   margin-top: 2px;
+  color: var(--sp-text);
 }
 
 .results-badges {
@@ -185,36 +189,40 @@ const cleanedInstructions = computed(() =>
 }
 
 .badge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.3rem 0.6rem;
-  border-radius: 20px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  border-radius: 100px;
   white-space: nowrap;
 }
 
 .badge-ai {
-  background: rgba(255,255,255,0.25);
-  color: white;
-  border: 1px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.9);
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
 .badge-fallback {
-  background: rgba(0,0,0,0.2);
-  color: rgba(255,255,255,0.9);
+  background: rgba(0,0,0,0.25);
+  color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 /* ─── Cards ─── */
 .card {
-  background: var(--card-bg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.5rem;
+  padding: 1.5rem 1.75rem;
   box-shadow: var(--shadow-sm);
 }
 
 .card-title {
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  color: var(--text);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   margin-bottom: 1.1rem;
 }
 
@@ -226,33 +234,35 @@ const cleanedInstructions = computed(() =>
 .parts-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 
 .parts-table th {
-  background: var(--primary);
-  color: white;
-  padding: 0.65rem 1rem;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  padding: 0.6rem 1rem;
   text-align: left;
-  font-weight: 600;
-  font-size: 0.82rem;
+  font-weight: 700;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.6px;
   white-space: nowrap;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .parts-table td {
-  padding: 0.6rem 1rem;
-  border-bottom: 1px solid var(--border);
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
   vertical-align: middle;
+  color: var(--text-muted);
 }
 
-.parts-table tbody tr:nth-child(even) td {
-  background: #f8f9fa;
+.parts-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .parts-table tbody tr:hover td {
-  background: #f0f4f8;
+  background: var(--bg-card-hover);
 }
 
 .part-name {
@@ -266,23 +276,24 @@ const cleanedInstructions = computed(() =>
 .col-notes { font-size: 0.82rem; }
 
 .quantity {
-  font-weight: 700;
+  font-weight: 800;
   font-size: 1.05rem;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .gauge-badge {
-  background: #e8f0fb;
-  color: #2471a3;
-  font-size: 0.78rem;
+  background: rgba(59,150,212,0.15);
+  color: #6ab8e8;
+  font-size: 0.75rem;
   font-weight: 700;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+  border-radius: 5px;
   white-space: nowrap;
+  border: 1px solid rgba(59,150,212,0.2);
 }
 
 .text-muted {
-  color: var(--text-muted);
+  color: var(--text-faint);
   font-size: 0.85rem;
 }
 
@@ -291,17 +302,22 @@ const cleanedInstructions = computed(() =>
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.5rem;
 }
 
 .step-item {
   display: flex;
   gap: 0.85rem;
   align-items: flex-start;
-  padding: 0.75rem;
+  padding: 0.85rem 1rem;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: #fafbfc;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card-hover);
+  transition: border-color 0.2s;
+}
+
+.step-item:hover {
+  border-color: var(--accent-border);
 }
 
 .step-number {
@@ -313,16 +329,16 @@ const cleanedInstructions = computed(() =>
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 800;
   flex-shrink: 0;
   margin-top: 1px;
 }
 
 .step-text {
-  font-size: 0.92rem;
-  line-height: 1.55;
-  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-muted);
 }
 
 /* ─── Tips ─── */
@@ -336,13 +352,13 @@ const cleanedInstructions = computed(() =>
   display: flex;
   gap: 0.75rem;
   align-items: flex-start;
-  background: #fff8f0;
+  background: var(--accent-subtle);
   border-left: 3px solid var(--accent);
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1rem;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   font-size: 0.875rem;
-  line-height: 1.5;
-  color: var(--text);
+  line-height: 1.55;
+  color: var(--text-muted);
 }
 
 .tip-dot {
@@ -356,13 +372,14 @@ const cleanedInstructions = computed(() =>
 
 /* ─── Diagram ─── */
 .diagram-box {
-  background: #1a2f4a;
-  color: #a8d8ea;
+  background: rgba(10,20,35,0.8);
+  color: #7ecbe8;
   padding: 1.25rem 1.5rem;
   border-radius: var(--radius-sm);
+  border: 1px solid rgba(59,150,212,0.15);
   font-family: 'Courier New', 'Consolas', monospace;
-  font-size: 0.9rem;
-  line-height: 1.7;
+  font-size: 0.88rem;
+  line-height: 1.75;
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -370,24 +387,24 @@ const cleanedInstructions = computed(() =>
 /* ─── Next phases ─── */
 .card-next {
   border: 1px dashed var(--border);
-  background: #fafbfc;
+  background: var(--bg-card);
 }
 
 .next-phases-text {
-  font-size: 0.9rem;
-  color: var(--text-muted);
+  font-size: 0.875rem;
+  color: var(--text-faint);
   margin-bottom: 1rem;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .btn-phase2 {
   width: 100%;
   padding: 0.8rem;
-  background: #dde1e7;
-  color: #9aa3af;
-  border: none;
+  background: var(--bg-card-hover);
+  color: var(--text-faint);
+  border: 1px dashed var(--border);
   border-radius: var(--radius-sm);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: not-allowed;
   font-family: inherit;
@@ -402,18 +419,19 @@ const cleanedInstructions = computed(() =>
   width: 100%;
   padding: 0.85rem;
   background: transparent;
-  color: var(--primary);
-  border: 2px solid var(--primary);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   font-family: inherit;
 }
 
 .btn-back:hover {
-  background: var(--primary);
-  color: white;
+  border-color: var(--border-strong);
+  color: var(--text);
+  background: var(--bg-card-hover);
 }
 </style>
