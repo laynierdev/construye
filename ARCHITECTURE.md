@@ -1,253 +1,185 @@
-# 🏗️ Arquitectura del Proyecto Construye
+# Arquitectura — Construye
 
-## Diagrama General
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    CLIENTE (NAVEGADOR)                      │
-│                                                              │
-│  ┌────────────────────────────────────────────────────┐    │
-│  │            Vue.js 3 - SPA (5173)                   │    │
-│  │                                                    │    │
-│  │  ┌──────────────────┐    ┌──────────────────────┐ │    │
-│  │  │  Formulario      │    │  ResultadosFase1.vue │ │    │
-│  │  │  (App.vue)       │───▶│                      │ │    │
-│  │  │                  │    │ - Tabla de piezas   │ │    │
-│  │  │ - Especialidad   │    │ - Instrucciones    │ │    │
-│  │  │ - Distancia      │    │ - Esquema diagramas │ │    │
-│  │  │ - Calibre        │    │ - Botón Fase 2     │ │    │
-│  │  │ - Esquinas       │    │                      │ │    │
-│  │  │ - Derivaciones   │    └──────────────────────┘ │    │
-│  │  └──────────────────┘                              │    │
-│  │          │                                          │    │
-│  │          │ HTTP POST                                │    │
-│  │          ▼                                          │    │
-│  │  ┌─────────────────────────┐                       │    │
-│  │  │   api.ts                │                       │    │
-│  │  │ Gestiona llamadas HTTP  │                       │    │
-│  │  └─────────────────────────┘                       │    │
-│  └────────────────────────────────────────────────────┘    │
-│                          │                                  │
-│                          │ Proxy CORS                       │
-│                          ▼                                  │
-└─────────────────────────────────────────────────────────────┘
-                          │
-                          │
-┌─────────────────────────────────────────────────────────────┐
-│                    SERVIDOR (BACKEND)                       │
-│                                                              │
-│  ┌────────────────────────────────────────────────────┐    │
-│  │        Hono Framework (Puerto 3000)                │    │
-│  │                                                    │    │
-│  │  ┌──────────────────────────────────────────────┐ │    │
-│  │  │  POST /api/v1/fase1/asistente               │ │    │
-│  │  │                                              │ │    │
-│  │  │  1. Validar especialidad                    │ │    │
-│  │  │  2. Construir prompt técnico                │ │    │
-│  │  │  3. Procesar según especialidad:            │ │    │
-│  │  │     - Plomería → piezasPlomeria()           │ │    │
-│  │  │     - Albañilería → piezasAlbanileria()     │ │    │
-│  │  │     - Electricidad → piezasElectricidad()   │ │    │
-│  │  │  4. Retornar respuesta mockeada             │ │    │
-│  │  │                                              │ │    │
-│  │  └──────────────────────────────────────────────┘ │    │
-│  │                      │                             │    │
-│  │                      ▼                             │    │
-│  │  ┌────────────────────────────────────────────┐   │    │
-│  │  │  Prisma Client (ORM)                       │   │    │
-│  │  │  [Preparado para Fase 2]                   │   │    │
-│  │  │  - Consultas a Categoria                   │   │    │
-│  │  │  - Búsqueda de Pieza                       │   │    │
-│  │  │  - Inventario por Vendedor                 │   │    │
-│  │  └────────────────────────────────────────────┘   │    │
-│  └────────────────────────────────────────────────────┘    │
-│                      │                                     │
-│                      ▼                                     │
-│  ┌─────────────────────────────────────────────────────┐  │
-│  │            MySQL Database                          │  │
-│  │  ┌──────────┐ ┌──────┐ ┌──────────┐ ┌──────────┐  │  │
-│  │  │Categoria │ │Pieza │ │Vendedor  │ │Inventario│  │  │
-│  │  └──────────┘ └──────┘ └──────────┘ └──────────┘  │  │
-│  └─────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## Flujo de Datos - Fase 1
+## Diagrama general
 
 ```
-1. ENTRADA DEL USUARIO
-   ┌──────────────────────────────────┐
-   │ Selecciona especialidad          │
-   │ Ingresa parámetros técnicos      │
-   │ Click "Generar Asistencia"       │
-   └──────────────────────────────────┘
-                    │
-                    ▼
-2. VALIDACIÓN EN CLIENTE
-   ┌──────────────────────────────────┐
-   │ Verificar campos obligatorios     │
-   │ Validar especialidad              │
-   │ Preparar payload JSON             │
-   └──────────────────────────────────┘
-                    │
-                    ▼
-3. ENVÍO HTTP
-   ┌──────────────────────────────────┐
-   │ POST /api/v1/fase1/asistente     │
-   │ Body: { especialidad, distancia, │
-   │         calibre, esquinas,       │
-   │         derivaciones }            │
-   └──────────────────────────────────┘
-                    │
-                    ▼
-4. PROCESAMIENTO EN SERVIDOR
-   ┌──────────────────────────────────┐
-   │ a) Validar especialidad           │
-   │ b) Mapear a función generadora    │
-   │ c) Calcular piezas requeridas     │
-   │ d) Construir instrucciones        │
-   │ e) Generar esquema conceptual     │
-   └──────────────────────────────────┘
-                    │
-                    ├─────────────────┬────────────────┐
-                    │                 │                │
-         Especialidad = Plomería │Albañilería    │Electricidad
-                    │                 │                │
-                    ▼                 ▼                ▼
-            generarPiezas      generarPiezas      generarPiezas
-             Plomeria()         Albanileria()      Electricidad()
-                    │                 │                │
-                    └─────────────────┴────────────────┘
-                                │
-                                ▼
-5. RESPUESTA DEL SERVIDOR
-   ┌──────────────────────────────────┐
-   │ {                                │
-   │   especialidad: string           │
-   │   piezas: Pieza[]                │
-   │   instrucciones: string          │
-   │   esquemaConceptual: string      │
-   │   proximasFases: string          │
-   │ }                                │
-   └──────────────────────────────────┘
-                    │
-                    ▼
-6. RENDERIZADO EN CLIENTE
-   ┌──────────────────────────────────┐
-   │ Mostrar ResultadosFase1.vue       │
-   │ - Tabla con materiales           │
-   │ - Instrucciones paso a paso      │
-   │ - Diagrama ASCII                 │
-   │ - Info sobre Fase 2 (próxima)    │
-   └──────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  CLIENTE  Vue 3 SPA · puerto 5173                               │
+│                                                                  │
+│  ┌──────────────┐   ┌────────────────┐   ┌──────────────────┐  │
+│  │ LandingPage  │   │  ClientApp     │   │  ClientPiezas    │  │
+│  │  /           │   │  /client       │   │  /buscar         │  │
+│  └──────────────┘   └───────┬────────┘   └────────┬─────────┘  │
+│                             │                      │             │
+│  ┌──────────────┐           │           ┌──────────▼─────────┐  │
+│  │  VendorPage  │           │           │  SolicitudModal     │  │
+│  │  /vendedor   │           │           │  (global, App.vue)  │  │
+│  └──────────────┘           │           └────────────────────┘  │
+│                             │                                    │
+│  ┌──────────────────────────▼─────────────────────────────────┐ │
+│  │  utils/api.ts  — única fuente de fetch                     │ │
+│  │  VITE_API_URL = http://localhost:3000                       │ │
+│  └──────────────────────────┬─────────────────────────────────┘ │
+└─────────────────────────────│───────────────────────────────────┘
+                              │ HTTP / JSON
+┌─────────────────────────────▼───────────────────────────────────┐
+│  SERVIDOR  Hono · puerto 3000                                   │
+│                                                                  │
+│  routes/ ──► controllers/ ──► services/ ──► repositories/      │
+│                                                   │              │
+│  Endpoints:                                        │              │
+│  POST /api/v1/phase1/assistant  (IA Gemini)       │              │
+│  POST /piezas                                     │              │
+│  GET  /piezas?provincia=X&municipio=Y             │              │
+│  POST /solicitudes                                │              │
+│  GET  /solicitudes                                │              │
+│                                               Prisma Client      │
+└───────────────────────────────────────────────────┼─────────────┘
+                                                    │
+┌───────────────────────────────────────────────────▼─────────────┐
+│  MySQL · puerto 3308 · base de datos: construyedb               │
+│                                                                  │
+│  Vendedor ──► Pieza                                             │
+│  Solicitud (vendedorId nullable — MVP público)                  │
+└─────────────────────────────────────────────────────────────────┘
+
+                              │  (servicio externo)
+┌─────────────────────────────▼───────────────────────────────────┐
+│  Google Gemini 2.5 Flash API                                    │
+│  generativelanguage.googleapis.com                              │
+│  Fallback matemático si la API no está disponible               │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## Especialidades - Generadores de Piezas
-
-### 🔧 PLOMERÍA
-```
-Input: distancia (metros), calibre, derivaciones
-Output:
-  └─ Tubería PVC (cantidad calculada)
-  └─ Codos 90° (según distancia)
-  └─ Tés de derivación (según derivaciones)
-  └─ Válvula de compuerta (1 unidad)
-  └─ Empaques de teflón (rollo)
-  └─ Pegamento PVC (bote)
-
-Instrucciones: Verificar presión, cortar tuberías, instalar conexiones
-```
-
-### 🧱 ALBAÑILERÍA
-```
-Input: distancia (metros), calibre, esquinas
-Output:
-  └─ Varillas de acero (según esquinas)
-  └─ Bolsas de cemento (según área)
-  └─ Arena para mortero (m³)
-  └─ Grava/Piedra (m³)
-  └─ Alambre de amarre (kg)
-  └─ Madera de encofrado (metros)
-
-Instrucciones: Nivelar, preparar varillas, verter concreto, curar
-```
-
-### ⚡ ELECTRICIDAD
-```
-Input: distancia (metros), calibre, derivaciones
-Output:
-  └─ Cable conductor (según distancia)
-  └─ Cajas de conexión (cada 1.5m)
-  └─ Conectores tipo tuerca
-  └─ Breakers/Interruptores (según derivaciones)
-  └─ Canaleta/Tubo conduit (metros)
-  └─ Placas de cubierta (unidades)
-
-Instrucciones: Verificar carga, tender cables, instalar cajas, probar
-```
-
-## Modelos de Base de Datos
+## Capas del servidor
 
 ```
-Categoria
-├─ id (PK)
-├─ nombre (UNIQUE)
-└─ descripcion
-   │
-   └──▶ Pieza (1:N)
-        ├─ id (PK)
-        ├─ nombre
-        ├─ calibre
-        ├─ unidad
-        └─ categoriaId (FK)
-           │
-           └──▶ Inventario (1:N)
-                ├─ id (PK)
-                ├─ cantidad
-                ├─ precio
-                ├─ piezaId (FK)
-                └─ vendedorId (FK)
-                       │
-                       └──▶ Vendedor
-                            ├─ id (PK)
-                            ├─ nombre
-                            ├─ ubicacion
-                            ├─ latitud
-                            ├─ longitud
-                            └─ telefono
+src/routes/          Hono router — solo monta handlers, sin lógica
+       │
+       ▼
+src/controllers/     Valida body, llama al service, forma la respuesta HTTP
+       │
+       ▼
+src/services/        Lógica de negocio (ej: buscar/crear vendedor, calcular nombre)
+       │
+       ▼
+src/repositories/    Única capa que importa PrismaClient — queries a MySQL
+       │
+       ▼
+lib/prisma.ts        Singleton del PrismaClient
 ```
 
-## Stack Tecnológico
+**Regla estricta:** cada capa solo importa la inmediatamente inferior. Los services nunca tocan Prisma directamente; los controllers nunca importan repositories.
 
-| Capa | Tecnología | Versión |
-|------|------------|---------|
-| Frontend | Vue.js 3 | 3.4+ |
-| Build Tool | Vite | 5.0+ |
-| Styling | W3.CSS | 4 |
-| Backend | Hono | 4.0+ |
-| ORM | Prisma | 5.0+ |
-| Database | MySQL | 8.0+ |
-| Language | TypeScript | 5.0+ |
-| Runtime | Node.js | 18+ |
+## Modelos de base de datos
 
-## Patrones y Decisiones
+```
+Vendedor
+├── id            Int (PK, autoincrement)
+├── nombre        String?   auto-generado como "vendedor_0001" si se omite
+├── telefono      String    identificador único del vendedor en MVP
+├── provincia     String
+├── municipio     String
+└── piezas        Pieza[]
 
-1. **Monorepo**: `client/` y `server/` separados pero en mismo repo
-2. **SPA**: Vue.js 3 con Composition API
-3. **Componentes**: Reutilizables, tipados, ligeros
-4. **Llamadas HTTP**: Centralizado en `utils/api.ts`
-5. **Lógica de negocio**: En servidor (motor de IA mockeado en Fase 1)
-6. **Estilos**: W3.CSS para mantener proyecto ligero
-7. **Tipos**: TypeScript en todo el stack
+Pieza
+├── id            Int (PK, autoincrement)
+├── nombre        String
+├── calibre       String?
+├── stock         Int
+├── provincia     String
+├── municipio     String
+├── vendedorId    Int (FK → Vendedor)
+└── vendedor      Vendedor
 
-## Preparación para Fase 2
+Solicitud
+├── id                 Int (PK, autoincrement)
+├── piezaNombre        String
+├── calibre            String?
+├── cantidad           Int
+├── nota               String?
+├── telefonoCliente    String
+├── prefiereMensajeria Boolean (default false)
+├── vendedorId         Int?    null en MVP — todas las solicitudes son públicas
+└── createdAt          DateTime (default now)
+```
 
-- ✅ Modelos Prisma listos (Categoria, Pieza, Vendedor, Inventario)
-- ✅ Botón "Buscar Piezas" inactivo (listo para conectar)
-- ✅ Estructura de endpoint preparada para integración con LLM
-- ✅ Tipos TypeScript escalables
-- ✅ API REST RESTful lista para expandir
+## Flujo: calcular materiales con IA
+
+```
+ClientApp
+  └── handleSubmit()
+        └── api.ts · POST /api/v1/phase1/assistant
+              └── phase1Controller
+                    └── phase1Service
+                          ├── buildPhase1Prompt()   — promptBuilder.ts
+                          ├── generateAIResponse()  — aiService.ts → Gemini API
+                          │     └── si falla → fallback matemático por especialidad
+                          └── devuelve Phase1Response { parts, instructions, tips, ... }
+```
+
+## Flujo: publicar pieza
+
+```
+VendorPage (form)
+  └── postPieza()  — api.ts · POST /piezas
+        └── piezasController
+              └── piezasService
+                    ├── vendedoresRepo.findByTelefono()   — ¿ya existe?
+                    │     ├── SÍ  → reusar vendedor existente
+                    │     └── NO  → vendedoresRepo.countAll() → generar nombre
+                    │               vendedoresRepo.create()
+                    └── piezasRepo.create()  → { pieza + vendedor }
+```
+
+## Flujo: solicitar material (modal global)
+
+```
+Cualquier página
+  └── openSolicitudModal(prefill?)   — useSolicitudModal.ts (singleton)
+        └── SolicitudModal.vue (Teleport → body)
+              └── submit() → api.ts · POST /solicitudes
+                    └── solicitudesController
+                          └── solicitudesService
+                                └── solicitudesRepo.create({ vendedorId: null })
+```
+
+## Estado global del cliente
+
+```
+useTheme.ts          ref<'dark'|'light'>   persiste en localStorage
+useSolicitudModal.ts ref<boolean> + prefill  abre/cierra el modal desde cualquier ruta
+```
+
+Ambos son singletons a nivel de módulo (state fuera del setup) — no requieren Pinia.
+
+## Tema dark/light
+
+Las variables CSS se definen en `client/index.html`:
+
+```
+:root               → dark (default)
+[data-theme="light"] → overrides
+```
+
+`useTheme.ts` escribe `data-theme` en `<html>` y persiste la preferencia. Un script inline en `<head>` previene FOUC (flash of unstyled content) al cargar la página.
+
+Todos los colores usan `var(--*)`. WCAG AA verificado en ambos modos:
+- Texto principal: ≥ 16:1
+- Texto secundario: ≥ 5:1
+- Botones de acción (naranja): ≥ 4.5:1
+
+## Decisiones de diseño
+
+| Decisión | Alternativa descartada | Razón |
+|----------|----------------------|-------|
+| CSS custom properties para tema | Pinia store | Más simple, sin dependencia externa |
+| Singleton de módulo para estado global | Pinia | MVP sin complejidad extra |
+| Gemini REST directo con fetch | SDK oficial | Sin bloques de compatibilidad ESM |
+| Fallback matemático en IA | Solo IA | Resiliencia sin degradar UX |
+| `vendedorId: null` en Solicitud | Relación obligatoria | MVP público — cualquier vendedor puede responder |
+| Teléfono como ID del vendedor | Email/usuario | Menor fricción en registro |
 
 ---
 
-**Última actualización:** Julio 2026
+*Última actualización: agosto 2025*
